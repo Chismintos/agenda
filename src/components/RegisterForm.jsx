@@ -10,7 +10,10 @@ const RegisterForm = () => {
         repeatPassword: ''
     });
 
-    const [errores, setErrores] = useState({});
+    const [errores, setErrores] = useState({
+		errorCorreo: false,
+		errorPassword: false,
+	});
 
     const validarDatos = () => {
         if (
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
         padding: 15,
         backgroundColor: "#FEFAE0",
         borderRadius: 15,
-        color: 'white',
+        color: 'black',
         fontSize: 16,
         marginVertical: 10,
     },

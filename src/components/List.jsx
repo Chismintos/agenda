@@ -3,21 +3,26 @@ import React, { useEffect, useState } from "react";
 import { FIRESTORE_DB } from "../utils/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 
-const List = () => {
+const List = ({currentUser }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const userRef = collection(FIRESTORE_DB, "contactos");
-    const subscriber = onSnapshot(userRef, (snapshot) => {
-      const updatedUsers = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setUsers(updatedUsers);
-    });
-
-    return () => subscriber();
-  }, []); // El arreglo vacío [] asegura que useEffect solo se ejecute una vez al montar el componente.
+		const userRef = collection(FIRESTORE_DB, currentUser.uid);
+		const subscriber = onSnapshot(userRef, {
+			next: (snapshot) => {
+				const users = [];
+				snapshot.docs.forEach((doc) => {
+					users.push({
+						id: doc.id,
+						...doc.data(),
+					});
+				});
+				setUsers(users);
+				//console.log(users);
+			},
+		});
+		return () => subscriber();
+	}, []);
 
   return (
     <View style={styles.container}>

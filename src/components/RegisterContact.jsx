@@ -9,16 +9,15 @@ import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from "dayjs";
 
 
-const RegisterContact= ({ showForm, setShowForm }) => {
+const RegisterContact= ({ showForm, setShowForm, currentUser  }) => {
 	const [value, setValue] = useState(dayjs());
-	const [users, setUsers] = useState();
 	const [name, setName] = useState();
 	const [phone, setPhone] = useState();
 	const [email, setEmail] = useState();
 
 	useEffect(() => {}, []);
 	const addUser = async () => {
-		const user = await addDoc(collection(FIRESTORE_DB, "contactos"), {
+		const user = await addDoc(collection(FIRESTORE_DB,  currentUser.uid), {
 			name: name,
 			phone: phone,
 			email: email,
@@ -26,7 +25,7 @@ const RegisterContact= ({ showForm, setShowForm }) => {
 		});
 		console.log(user);
 	};
-	const [userData, setUserData] = useState("");
+	
 
 	return (
 		<View style={styles.mainContainer}>
@@ -82,7 +81,7 @@ const RegisterContact= ({ showForm, setShowForm }) => {
 						setShowForm(!showForm);
 					}}
 				>
-					<Text style={styles.text}>Ver</Text>
+					<Text style={styles.textinput}>Ver</Text>
 				</TouchableOpacity>
 			</ScrollView>
 		</View>
@@ -112,7 +111,7 @@ const styles = StyleSheet.create({
 	btn: {
 		marginTop: 20,
 		width: "90%",
-		backgroundColor: "black",
+		backgroundColor: "#A9B388",
 		borderRadius: 12,
 		alignItems: "center",
 		justifyContent: "center",
@@ -127,6 +126,9 @@ const styles = StyleSheet.create({
 	text: {
 		color: "black",
 	},
+	textinput:{
+		color: 'white'
+	}
 });
 
 export default RegisterContact;

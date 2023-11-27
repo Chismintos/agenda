@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import firebase from "../utils/firebase";
 import RegisterContact from "./RegisterContact";
 import List from "./List";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 const Logout = () => {
   const [showForm, setShowForm] = useState(false);
@@ -15,13 +17,25 @@ const Logout = () => {
     setShowForm((prevShowForm) => !prevShowForm);
   };
 
+  const auth = getAuth();
+	const currentUser = auth.currentUser;
+
+	if (currentUser) {
+		// User is signed in, see docs for a list of available properties
+		// https://firebase.google.com/docs/reference/js/auth.user
+		// ...
+		console.log(typeof currentUser.uid);
+	} else {
+		// No user is signed in.
+	}
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contactsContainer}>
         {showForm ? (
-          <RegisterContact showForm={showForm} setShowForm={setShowForm} />
+          <RegisterContact showForm={showForm} setShowForm={setShowForm} currentUser={currentUser} />
         ) : (
-          <List />
+          <List currentUser={currentUser} />
         )}
       </View>
 
