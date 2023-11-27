@@ -5,7 +5,6 @@ import firebase from './src/utils/firebase';
 import 'firebase/compat/auth';
 import Auth from './src/components/Auth';
 import Logout from './src/components/Logout';
-
 export default function App() {
 
   const [user, setUser] = useState(undefined)
@@ -31,7 +30,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#15212B',
+    backgroundColor: '#5F6F52',
     alignItems: 'center',
     justifyContent: 'center',
     height:'100%'

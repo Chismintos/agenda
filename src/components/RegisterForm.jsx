@@ -1,120 +1,130 @@
-import { View, Text, TextInput,StyleSheet, TouchableOpacity, Keyboard } from 'react-native'
-import React, { useState } from 'react'
-import { validateEmail } from '../utils/validations'
-import firebase from '../utils/firebase'
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { validateEmail } from '../utils/validations';
+import React, { useState } from 'react';
+import firebase from "firebase/compat";
 
-const RegisterForm = ({ setShow }) => {
-
+const RegisterForm = () => {
     const [formData, setFormData] = useState({
-        email:'',
-        password:'',
-        repeatPassword:''
-    })
+        email: '',
+        password: '',
+        repeatPassword: ''
+    });
 
-    const [errores, setErrores] = useState({
-		errorCorreo: false,
-		errorPassword: false,
-	});
+    const [errores, setErrores] = useState({});
 
     const validarDatos = () => {
-        if (formData.email !== "" && formData.password !== "" && formData.repeatPassword !== "") {
-
-            console.log(formData.email);
+        if (
+            formData.email !== "" &&
+            formData.password !== "" &&
+            formData.repeatPassword !== ""
+        ) {
             if (!validateEmail(formData.email)) {
-                console.log("Email incorrecto");
+                console.log("email incorrecto");
                 setErrores({ errorCorreo: true });
             }
             if (formData.password !== formData.repeatPassword) {
-                console.log("Password incorrecto");
+                console.log("password incorrecto");
                 setErrores({ errorPassword: true });
             }
 
             console.log("los datos pasaron");
-            firebase.auth().createUserWithEmailAndPassword(formData.email, formData.password);
+            firebase
+                .auth()
+                .createUserWithEmailAndPassword(formData.email, formData.password);
         } else {
             setErrores({
                 errorCorreo: true,
                 errorPassword: true,
             });
         }
-    }
+    };
 
-  return (
-    <>
-     
-        <Text style={styles.texto}>REGISTRO</Text>
-
-        <TextInput 
-            placeholder='email' 
-            style={styles.input} 
-            placeholderTextColor={'#cbcbcb'} 
-            onChange={(e) => setFormData({ ...formData, email: e.nativeEvent.text })}
-            keyboardType='email-address'
-            autoCapitalize='none'
-            autoCorrect={false}
+    return (
+        <>
+            <Text style={styles.title}>Registro</Text>
+            <Text style={styles.label}>Email:</Text>
+            <TextInput
+                placeholder='Email'
+                style={styles.input}
+                placeholderTextColor='#cbcbcb'
+                onChangeText={(text) => setFormData({ ...formData, email: text })}
+                keyboardType='email-address'
+                autoCapitalize='none'
+                autoCorrect={false}
+            />
+            <Text style={styles.label}>Password:</Text>
+            <TextInput
+                placeholder='Password'
+                style={styles.input}
+                placeholderTextColor='#cbcbcb'
+                onChangeText={(text) => setFormData({ ...formData, password: text })}
+                secureTextEntry={true}
+                autoCapitalize='none'
+                autoCorrect={false}
+            />
+            <Text style={styles.label}>Confirm Password:</Text>
+            <TextInput
+                placeholder='Confirm Password'
+                style={styles.input}
+                placeholderTextColor='#cbcbcb'
+                onChangeText={(text) => setFormData({ ...formData, repeatPassword: text })}
+                secureTextEntry={true}
+                autoCapitalize='none'
+                autoCorrect={false}
             />
 
-        <TextInput 
-            placeholder='Password' 
-            style={styles.input} 
-            placeholderTextColor={'#cbcbcb'} 
-            onChange={(e) => setFormData({ ...formData, password: e.nativeEvent.text })}         
-            autoCapitalize='none'
-            autoComplete='off'
-            autoCorrect={false}
-            />
+            {errores.errorCorreo && <Text>Error: Email incorrecto</Text>}
+            {errores.errorPassword && <Text>Error: Contraseñas no coinciden</Text>}
 
-        <TextInput 
-            placeholder='Repeat password' 
-            style={styles.input} 
-            placeholderTextColor={'#cbcbcb'} 
-            onChange={(e) => setFormData({ ...formData, repeatPassword: e.nativeEvent.text })}         
-            autoCapitalize='none'
-            autoComplete='off'
-            autoCorrect={false}
-            />
-        
-        {errores.errorCorreo && <Text>Error: Email incorrecto</Text>}
-        {errores.errorPassword && <Text>Error: Contraseñas no coinciden</Text>}
-            
-        <TouchableOpacity style={styles.btn} onPress={validarDatos}>
-            <Text style={styles.texto}>Registrar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn} onPress={() => {setShow(false);}}>
-            <Text style={styles.texto}>Regresar</Text>
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.btn} onPress={validarDatos}>
+                <Text style={styles.texto}>Sumbmit</Text>
+            </TouchableOpacity>
+        </>
+    );
+};
 
-    </>
-  )
-}
-
-
-const styles =  StyleSheet.create({
-    input:{
-        width:'80%',
-        padding:15,
-        backgroundColor:'#0b5351',
+const styles = StyleSheet.create({
+    input: {
+        width: "85%",
+        padding: 15,
+        backgroundColor: "#FEFAE0",
         borderRadius: 15,
-        fontSize:16,
-        marginVertical:10
-    },
-    texto:{
-        marginTop: 5,
-        marginBottom: 5,
-        color:'white',
-        fontSize: 20
+        color: 'white',
+        fontSize: 16,
+        marginVertical: 10,
     },
     btn: {
-        backgroundColor: '#3498db',
-        paddingVertical:1,
-        paddingHorizontal: 30,
-        borderRadius: 5,
+        width: "85%",
+        borderRadius: 12,
+        padding: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10,
-        marginTop:10
-        
-      },
-})
+        marginTop: 25,
+        backgroundColor: "#A9B388",
+    },
+    texto: {
+        color: 'white',
+        fontSize: 15,
+        textAlign: 'center',
+    },
+    text: {
+        fontSize: 20,
+        color: 'white',
+        padding: 15,
 
-export default RegisterForm
+    },
+    label: {
+        fontSize: 16,
+        color: "white",
+        alignSelf: "flex-start",
+        marginLeft: 30,
+        marginBottom: 5,
+      },
+    title: {
+        fontSize: 30,
+        color: "white",
+        marginBottom: 20,
+      },
+});
+
+export default RegisterForm;
