@@ -1,30 +1,58 @@
 "use client";
-import React, { useEffect } from "react";
-import { useState } from "react";
-import {Button,ScrollView,StyleSheet,Text,TextInput,TouchableOpacity,View,} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Button, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { addDoc, collection } from "firebase/firestore";
 import { FIRESTORE_DB } from "../utils/firebase";
 
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from "dayjs";
 
+const RegisterContact = ({ currentUser }) => {
+  const [value, setValue] = useState(dayjs());
+  const [name, setName] = useState();
+  const [phone, setPhone] = useState();
+  const [email, setEmail] = useState();
 
-const RegisterContact= ({ showForm, setShowForm, currentUser  }) => {
-	const [value, setValue] = useState(dayjs());
-	const [name, setName] = useState();
-	const [phone, setPhone] = useState();
-	const [email, setEmail] = useState();
+  useEffect(() => {}, []);
 
-	useEffect(() => {}, []);
-	const addUser = async () => {
-		const user = await addDoc(collection(FIRESTORE_DB,  currentUser.uid), {
-			name: name,
-			phone: phone,
-			email: email,
-			date: value,
-		});
-		console.log(user);
-	};
+  const validarDatos = () => {
+    if (!name || !phone || !email ) {
+      mostrarAlerta('Error', 'Todos los campos son obligatorios');
+      return false;
+    }
+
+    // Puedes agregar otras validaciones según tus necesidades
+
+    return true;
+  };
+
+  const addUser = async () => {
+    if (!validarDatos()) {
+      return;
+    }
+
+    try {
+      const user = await addDoc(collection(FIRESTORE_DB, currentUser.uid), {
+        name: name,
+        phone: phone,
+        email: email,
+        date: value,
+      });
+
+      console.log(user);
+
+      // Éxito al agregar usuario
+      mostrarAlerta('Éxito', 'Contacto agregado exitosamente.');
+    } catch (error) {
+      // Manejar errores al agregar usuario
+      console.error("Error al agregar usuario:", error.message);
+      mostrarAlerta('Error', `Error al agregar contacto: ${error.message}`);
+    }
+  };
+
+  const mostrarAlerta = (titulo, mensaje) => {
+    Alert.alert(titulo, mensaje);
+  };
 	
 
 	return (
@@ -74,15 +102,12 @@ const RegisterContact= ({ showForm, setShowForm, currentUser  }) => {
 						headerTextStyle={(color = "white")}
 					/>
 				</View>
-				<Button onPress={addUser} title="Add User" disabled={name === ""} />
-				<TouchableOpacity
-					style={styles.btn}
-					onPress={() => {
-						setShowForm(!showForm);
-					}}
-				>
-					<Text style={styles.textinput}>Ver</Text>
+				<TouchableOpacity style={styles.btn} onPress={addUser}>
+
+					<Text style={styles.textinput}>Add contact</Text>
 				</TouchableOpacity>
+				{/* <Button onPress={addUser} title="Add User" disabled={name === ""} /> */}
+				
 			</ScrollView>
 		</View>
 	);
@@ -106,10 +131,10 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		color: "black",
 		fontSize: 16,
-		marginVertical: 5,
+		marginVertical: 10,
 	},
 	btn: {
-		marginTop: 20,
+		marginTop:20,
 		width: "90%",
 		backgroundColor: "#A9B388",
 		borderRadius: 12,
@@ -128,6 +153,9 @@ const styles = StyleSheet.create({
 	},
 	textinput:{
 		color: 'white'
+	},
+	container:{
+		marginTop:30
 	}
 });
 

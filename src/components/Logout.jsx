@@ -1,13 +1,14 @@
+// Logout.js
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import firebase from "../utils/firebase";
 import RegisterContact from "./RegisterContact";
 import List from "./List";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-
+import { getAuth } from "firebase/auth";
 
 const Logout = () => {
   const [showForm, setShowForm] = useState(false);
+  const [formButtonText, setFormButtonText] = useState("Add account");
 
   const closeSession = () => {
     firebase.auth().signOut();
@@ -15,19 +16,11 @@ const Logout = () => {
 
   const formToggle = () => {
     setShowForm((prevShowForm) => !prevShowForm);
+    setFormButtonText(showForm ? "Add account" : "Show contacts");
   };
 
   const auth = getAuth();
-	const currentUser = auth.currentUser;
-
-	if (currentUser) {
-		// User is signed in, see docs for a list of available properties
-		// https://firebase.google.com/docs/reference/js/auth.user
-		// ...
-		console.log(typeof currentUser.uid);
-	} else {
-		// No user is signed in.
-	}
+  const currentUser = auth.currentUser;
 
   return (
     <View style={styles.mainContainer}>
@@ -41,11 +34,11 @@ const Logout = () => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={formToggle}>
-          <Text style={styles.buttonText}>Agregar</Text>
+          <Text style={styles.buttonText}>{formButtonText}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={closeSession}>
-          <Text style={styles.buttonText}>Salir</Text>
+          <Text style={styles.buttonText}>Log out</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -58,13 +51,11 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-  
   },
   contactsContainer: {
     flex: 14,
     justifyContent: "center",
     alignItems: "center",
-    
   },
   buttonContainer: {
     flex: 1,
@@ -74,13 +65,13 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   button: {
+    flex: 1,
     backgroundColor: "#A9B388",
     borderRadius: 12,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
     marginHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
+    padding: 15,
   },
   buttonText: {
     color: "white",

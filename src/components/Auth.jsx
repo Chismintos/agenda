@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import RegisterForm from "./RegisterForm";
 import firebase from "../utils/firebase";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -12,10 +12,20 @@ const Auth = () => {
   });
   const [showPassword, setShowPassword] = useState(true); // Agrega el estado para mostrar/ocultar la contraseña
 
-  const iniciarSesion = () => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(dataLogin.email, dataLogin.password);
+  const iniciarSesion = async () => {
+    try {
+      await firebase.auth().signInWithEmailAndPassword(dataLogin.email, dataLogin.password);
+      // Éxito al iniciar sesión
+      // console.log("Inicio de sesión exitoso");
+    } catch (error) {
+      // Manejar errores al iniciar sesión
+      // console.error("Error al iniciar sesión:", error.message);
+      mostrarAlerta('Error', 'Error al iniciar sesión. Ingrese una cuenta existente');
+    }
+  };
+
+  const mostrarAlerta = (titulo, mensaje) => {
+    Alert.alert(titulo, mensaje);
   };
 
   const toggleShowPassword = () => {

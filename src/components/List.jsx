@@ -1,28 +1,39 @@
-import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Button, ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FIRESTORE_DB } from "../utils/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
+import { deleteDoc, doc } from 'firebase/firestore';
 
-const List = ({currentUser }) => {
+
+const List = ({ currentUser }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-		const userRef = collection(FIRESTORE_DB, currentUser.uid);
-		const subscriber = onSnapshot(userRef, {
-			next: (snapshot) => {
-				const users = [];
-				snapshot.docs.forEach((doc) => {
-					users.push({
-						id: doc.id,
-						...doc.data(),
-					});
-				});
-				setUsers(users);
-				//console.log(users);
-			},
-		});
-		return () => subscriber();
-	}, []);
+    const userRef = collection(FIRESTORE_DB, currentUser.uid);
+    const subscriber = onSnapshot(userRef, {
+      next: (snapshot) => {
+        const users = [];
+        snapshot.docs.forEach((doc) => {
+          users.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        setUsers(users);
+      },
+    });
+    return () => subscriber();
+  }, []);
+
+  const eliminarContacto = async (id) => {
+    try {
+      // Eliminar el documento correspondiente al ID del contacto
+      await deleteDoc(doc(FIRESTORE_DB, currentUser.uid, id));
+      console.log('Contacto eliminado con éxito');
+    } catch (error) {
+      console.error('Error al eliminar contacto:', error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -35,6 +46,11 @@ const List = ({currentUser }) => {
                 <Text style={styles.text}>Email: {user.email}</Text>
                 <Text style={styles.text}>Name: {user.name}</Text>
                 <Text style={styles.text}>Phone: {user.phone}</Text>
+
+                {/* Agregar botón de eliminación */}
+                <TouchableOpacity onPress={() => eliminarContacto(user.id)}>
+                  <Text style={styles.eliminarButton}>Eliminar</Text>
+                </TouchableOpacity>
               </View>
             ))}
           </View>
@@ -54,6 +70,12 @@ const styles = StyleSheet.create({
     width: 330,
     borderRadius: 20,
     
+  },
+  eliminarButton: {
+    color: 'white',
+    marginTop: 10,
+    textDecorationLine: 'underline',
+    fontSize: 14,
   },
   contactsCont: {
     flex: 14,
