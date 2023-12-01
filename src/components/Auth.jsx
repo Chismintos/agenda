@@ -20,7 +20,7 @@ const Auth = () => {
     } catch (error) {
       // Manejar errores al iniciar sesión
       // console.error("Error al iniciar sesión:", error.message);
-      mostrarAlerta('Error', 'Error al iniciar sesión. Ingrese una cuenta existente');
+      mostrarAlerta('Error', 'Error al iniciar sesión. Ingrese una cuenta existente.');
     }
   };
 
